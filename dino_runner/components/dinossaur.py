@@ -1,5 +1,5 @@
 import pygame
-from dino_runner.utils.constants import RUNNING, JUMPING
+from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING
 
 X_POS = 80 ## constante de posição horizontal
 Y_POS = 310 ## constante de posição vertical
@@ -16,19 +16,27 @@ class Dinossaur:
         self.dino_jump = False ## Evento de pulo
         self.dino_run = True ## Evento de corrida do dino(sempre está correndo atté o jogo acabar)
         self.jump_vel = JUMP_VEL ## evento de cálculo da velocidade do pulo ao pular
+        self.dino_duck = False ## evento de agachar
 
     def update(self, user_input): ## metódo presente em todos os objetos (<<< assim como o método draw) atualiza o estado do objetp, no caso o dino.
-        if user_input[pygame.K_SPACE] and not self.dino_jump:
+        if user_input[pygame.K_SPACE] and not self.dino_jump and not self.dino_duck: ## usa o input <tecla space> para ativar o modo jump
             self.dino_jump = True
             self.dino_run = False
         elif not self.dino_jump:
             self.dino_jump = False
             self.dino_run = True
 
-        if self.dino_run:
+        if user_input[pygame.K_DOWN] and not self.dino_jump: ## usa o iput <seta para baixo> para ativar o modo duck
+            self.dino_duck = True
+        else:
+            self.dino_duck = False
+
+        if self.dino_run: ## enquato dino run for verdade, método run será ativado
             self.run()
-        if self.dino_jump:
+        if self.dino_jump: ## enquato dino jump for verdade, método run será ativado
             self.jump()
+        if self.dino_duck: ## enquato dino duck for verdade, método run será ativado
+            self.duck()
         
         if self.step_index >= 10: ## completa a logica criando alternancia entre as imagens do array
             self.step_index = 0
@@ -50,6 +58,18 @@ class Dinossaur:
             self.dino_rect.y = Y_POS ## retornando a posição inicial do eixo vertical
             self.jump_vel = JUMP_VEL ## retora a velociade de pulo
             self.dino_jump = False # retorna False a não ocorrencia do eveto de pulo
+
+    def duck(self):
+        self.image = DUCKING[0] if self.step_index < 5 else DUCKING[1]
+        self.dino_rect = self.image.get_rect()
+        if self.dino_duck:
+            self.dino_rect.y = Y_POS + 30
+            self.dino_rect.x = X_POS
+        else:
+            self.dino_rect.x = X_POS
+            self.dino_rect.y = Y_POS
+            self.dino_duck = False
+
 
     def draw(self, screen):
         screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y)) ##desenha na tela o enfileiramento das imagens
