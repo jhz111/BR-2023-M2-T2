@@ -2,6 +2,9 @@ import pygame
 
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
 from dino_runner.components.dinossaur import Dinossaur ## instancia internamente o objeto dinossauro para dentro do game
+from dino_runner.components.obstacles.obstacleManager import ObstacleManager
+
+
 
 class Game:
     def __init__(self):
@@ -16,6 +19,7 @@ class Game:
         self.y_pos_bg = 380
 
         self.player = Dinossaur() ## criação do player como uma instancia do dino
+        self.obstacle_manager = ObstacleManager()
 
     def run(self):
         # Game loop: events - update - draw
@@ -34,6 +38,7 @@ class Game:
     def update(self):
         user_input = pygame.key.get_pressed() ## percdebe interação do usuário
         self.player.update(user_input) ## pega o método do objeto dino para atualizar o game com a entrada do usuário
+        self.obstacle_manager.update(self)
 
 
     def draw(self):
@@ -41,6 +46,7 @@ class Game:
         self.screen.fill((255, 255, 255))
         self.draw_background()
         self.player.draw(self.screen) ## método do bjeto dinossauro que desenha para o usuario o dino
+        self.obstacle_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
 

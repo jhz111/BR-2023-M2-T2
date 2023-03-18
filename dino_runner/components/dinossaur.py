@@ -1,12 +1,15 @@
 import pygame
+
+from pygame.sprite import Sprite
 from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING
 
 X_POS = 80 ## constante de posição horizontal
 Y_POS = 310 ## constante de posição vertical
 JUMP_VEL = 8.5 ## constatnte de velocidade de pulo que entrará em cálculo para progressão do jogo 
+Y_POS_DUCK = 340
 ## criação de constantes para simplificar o código
 
-class Dinossaur:
+class Dinossaur(Sprite):
     def __init__(self):
         self.image = RUNNING[0] ## Lista iniciando a imagem do dino correndo, partido da primeira imagem
         self.dino_rect = self.image.get_rect() ## seleção do quadrado de ocorrencia do dino, usando da função get_rect()
@@ -19,25 +22,27 @@ class Dinossaur:
         self.dino_duck = False ## evento de agachar
 
     def update(self, user_input): ## metódo presente em todos os objetos (<<< assim como o método draw) atualiza o estado do objetp, no caso o dino.
-        if user_input[pygame.K_SPACE] and not self.dino_jump and not self.dino_duck: ## usa o input <tecla space> para ativar o modo jump
-            self.dino_jump = True
-            self.dino_run = False
-        elif not self.dino_jump:
-            self.dino_jump = False
-            self.dino_run = True
-
-        if user_input[pygame.K_DOWN] and not self.dino_jump: ## usa o iput <seta para baixo> para ativar o modo duck
-            self.dino_duck = True
-        else:
-            self.dino_duck = False
 
         if self.dino_run: ## enquato dino run for verdade, método run será ativado
             self.run()
-        if self.dino_jump: ## enquato dino jump for verdade, método run será ativado
+        elif self.dino_jump: ## enquato dino jump for verdade, método jump será ativado
             self.jump()
-        if self.dino_duck: ## enquato dino duck for verdade, método run será ativado
+        elif self.dino_duck: ## enquato dino duck for verdade, método duck será ativado
             self.duck()
-        
+
+        if user_input[pygame.K_UP] and not self.dino_jump: ## usa o input <tecla space> para ativar o modo jump
+            self.dio_run = False
+            self.dino_jump = True
+            self.dino_duck = False
+        elif user_input[pygame.K_DOWN] and not self.dino_jump: ## usa o iput <seta para baixo> para ativar o modo duck
+            self.dino_run = False
+            self.dino_jump = False
+            self.dino_duck = True
+        elif not self.dino_duck and not self.dino_jump:
+            self.dino_run = True
+            self.dino_jump = False
+            self.dino_duck = False
+
         if self.step_index >= 10: ## completa a logica criando alternancia entre as imagens do array
             self.step_index = 0
 
@@ -63,11 +68,9 @@ class Dinossaur:
         self.image = DUCKING[0] if self.step_index < 5 else DUCKING[1]
         self.dino_rect = self.image.get_rect()
         if self.dino_duck:
-            self.dino_rect.y = Y_POS + 30
+            self.dino_rect.y = Y_POS_DUCK
             self.dino_rect.x = X_POS
-        else:
-            self.dino_rect.x = X_POS
-            self.dino_rect.y = Y_POS
+            self.step_index += 1
             self.dino_duck = False
 
 
