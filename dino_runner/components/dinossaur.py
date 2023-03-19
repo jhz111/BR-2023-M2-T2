@@ -5,6 +5,7 @@ from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING
 
 X_POS = 80 ## constante de posição horizontal
 Y_POS = 310 ## constante de posição vertical
+Y_POS_DUCK = 340 ## constante de posição vertical durante duck
 JUMP_VEL = 8.5 ## constatnte de velocidade de pulo que entrará em cálculo para progressão do jogo 
 ## criação de constantes para simplificar o código
 
@@ -35,8 +36,10 @@ class Dinossaur(Sprite):
 
         if self.dino_run: ## enquato dino run for verdade, método run será ativado
             self.run()
+
         if self.dino_jump: ## enquato dino jump for verdade, método run será ativado
             self.jump()
+
         if self.dino_duck: ## enquato dino duck for verdade, método run será ativado
             self.duck()
         
@@ -65,7 +68,7 @@ class Dinossaur(Sprite):
         self.image = DUCKING[0] if self.step_index < 5 else DUCKING[1]
         self.dino_rect = self.image.get_rect()
         if self.dino_duck:
-            self.dino_rect.y = Y_POS + 30
+            self.dino_rect.y = Y_POS_DUCK
             self.dino_rect.x = X_POS
         else:
             self.dino_rect.x = X_POS
