@@ -13,7 +13,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.playing = False
-        self.running = False ## exe utando aplicacao
+        self.running = False ## executando aplicacao
         self.game_speed = 20
         self.x_pos_bg = 0
         self.y_pos_bg = 380
@@ -29,7 +29,7 @@ class Game:
             if not self.playing:
                 self.show_menu()
 
-        pygame.dispay.quit()
+        pygame.display.quit()
         pygame.quit()
 
     def run(self):
@@ -77,12 +77,15 @@ class Game:
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
 
+    def draw_text(self, text_choiced, font_size, xpos, ypos):  ## Método para criar texto usando o texto, tamanho e posições
+            font = pygame.font.Font(FONT_STYLE, int(font_size))
+            text = font.render(text_choiced, True, (0, 0, 0))
+            text_rect = text.get_rect()
+            text_rect.center = (xpos, ypos)
+            self.screen.blit(text, text_rect)
+
     def draw_score(self):
-        font = pygame.font.Font(FONT_STYLE, 22)
-        text = font.render(f'Score: {self.score}', True, (0, 0, 0))
-        text_rect = text.get_rect()
-        text_rect.center = (1000, 50)
-        self.screen.blit(text, text_rect)
+        self.draw_text(f'Score: {self.score}', 20, 1000, 50) ## Cria um texto no canto da tela com as informações de score
 
     def handle_events_on_menu(self):
         for event in pygame.event.get():
@@ -90,21 +93,21 @@ class Game:
                 self.playing = False
                 self.running = False
             elif event.type == pygame.KEYDOWN:
+                self.score = 0 ## Retorna o score a 0
                 self.run()
 
     def show_menu(self):
         self.screen.fill((255, 255, 255))
-        half_screen_height = SCREEN_HEIGHT // 2
-        half_screen_width = SCREEN_WIDTH // 2
-
+        self.half_screen_height = SCREEN_HEIGHT // 2
+        self.half_screen_width = SCREEN_WIDTH // 2
         if self.death_count == 0:
-            font = pygame.font.Font(FONT_STYLE, 22)
-            text = font.render('Press any key to start', True, (0, 0, 0))
-            text_rect = text.get_rect()
-            text_rect.center = (half_screen_width, half_screen_height)
-            self.screen.blit(text, text_rect)
+            self.draw_text('Press any key to start', 40, self.half_screen_width, self.half_screen_height)
         else:
-            self.screen.blit(ICON, (half_screen_width -20, half_screen_height - 140))
+            self.screen.blit(ICON, (500, 150))
+            self.draw_text('You lose.', 25, self.half_screen_width, self.half_screen_height)
+            self.draw_text(f'Score: {self.score}', 25, self.half_screen_width, 350) ## contador de score
+            self.draw_text(f'Loses: {self.death_count}', 25, self.half_screen_width, 400) ## contador de mortes
+            self.draw_text('Press any key to restart', 35, self.half_screen_width, 500)            
 
         pygame.display.flip()
 
