@@ -13,7 +13,7 @@ from dino_runner.components.obstacles.bird import Bird
 class ObstacleManager:
     def __init__(self):
         self.obstacles = []
-        self.obstacles_classes = [Cactus, Bird] ## Envolve as classes em uma lista para usar a função choice
+        self.obstacles_classes = [Cactus, Cactus, Bird] ## Envolve as classes em uma lista para usar a função choice
 
     def update(self, game):
         if len(self.obstacles) == 0:
@@ -26,11 +26,14 @@ class ObstacleManager:
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
             if game.player.dino_rect.colliderect(obstacle.rect):
-                pygame.time.delay(500)
-                game.playing = False
-                game.death_count += 1
-                game.game_speed = 20
-                break
+                if not game.player.has_power_up:
+                    pygame.time.delay(500)
+                    game.playing = False
+                    game.death_count += 1
+                    game.game_speed = 20 ## Reinicio da velocidade do jogo
+                    break
+                else:
+                    self.obstacles.remove(obstacle)
 
     def draw(self, screen):
         for obstacle in self.obstacles:

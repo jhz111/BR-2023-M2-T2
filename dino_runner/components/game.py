@@ -1,8 +1,9 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE, DEFAULT_TYPE
 from dino_runner.components.dinossaur import Dinossaur ## instancia internamente o objeto dinossauro para dentro do game
 from dino_runner.components.obstacles.obstacleManager import ObstacleManager
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
 
 class Game:
@@ -22,6 +23,7 @@ class Game:
 
         self.player = Dinossaur() ## criação do player como uma instancia do dino
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
 
     def execute(self): 
         self.running = True
@@ -36,6 +38,7 @@ class Game:
         # Game loop: events - update - draw
         self.playing = True
         self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_power_ups()
         while self.playing:
             self.events()
             self.update()
@@ -52,11 +55,12 @@ class Game:
         self.player.update(user_input) ## pega o método do objeto dino para atualizar o game com a entrada do usuário
         self.obstacle_manager.update(self)
         self.update_score()
+        self.power_up_manager.update(self.score, self.game_speed, self.player)
 
     def update_score(self):
         self.score += 1
-        if self.score % 200 == 0:
-            self.game_speed += 5
+        if self.score % 100 == 0:
+            self.game_speed += 2
 
     def draw(self):
         self.clock.tick(FPS)
@@ -65,6 +69,8 @@ class Game:
         self.player.draw(self.screen) ## método do bjeto dinossauro que desenha para o usuario o dino
         self.obstacle_manager.draw(self.screen)
         self.draw_score()
+        self.draw_power_up_time()
+        self.power_up_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
 
@@ -86,6 +92,15 @@ class Game:
 
     def draw_score(self):
         self.draw_text(f'Score: {self.score}', 20, 1000, 50) ## Cria um texto no canto da tela com as informações de score
+
+    def draw_power_up_time(self):
+        if self.player.has_power_up:
+            time_to_show = round((self.player.power_up_time - pygame.time.get_ticks()) / 1000, 2)
+            if time_to_show >= 0:
+                self.draw_text(f'{self.player.type.capitalize()} enabled for {time_to_show} seconds', 18, 500, 40)
+            else:
+                self.player.has_power_up = False
+                self.player.type = DEFAULT_TYPE
 
     def handle_events_on_menu(self):
         for event in pygame.event.get():
