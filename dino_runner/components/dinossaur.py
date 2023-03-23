@@ -1,25 +1,25 @@
 import pygame
 from pygame.sprite import Sprite
 
-from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, DEFAULT_TYPE, SHIELD_TYPE, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING_SHIELD, HAMMER_TYPE, DUCKING_HAMMER, JUMPING_HAMMER, RUNNING_HAMMER, HEART_TYPE
+from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, DEFAULT_TYPE, SHIELD_TYPE, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING_SHIELD, HAMMER_TYPE, DUCKING_HAMMER, JUMPING_HAMMER, RUNNING_HAMMER, HEART_TYPE, RUNNING_HEART, JUMPING_HEART, DUCKIN_HEART
 
 DUCK_IMG = {
     DEFAULT_TYPE: DUCKING, 
     SHIELD_TYPE: DUCKING_SHIELD,
     HAMMER_TYPE: DUCKING_HAMMER,
-    HEART_TYPE: DUCKING
+    HEART_TYPE: DUCKIN_HEART
     }
 JUMP_IMG = {
     DEFAULT_TYPE: JUMPING,
     SHIELD_TYPE: JUMPING_SHIELD,
     HAMMER_TYPE: JUMPING_HAMMER,
-    HEART_TYPE: JUMPING
+    HEART_TYPE: JUMPING_HEART
      }
 RUN_IMG = {
     DEFAULT_TYPE: RUNNING,
     SHIELD_TYPE: RUNNING_SHIELD,
     HAMMER_TYPE: RUNNING_HAMMER,
-    HEART_TYPE: RUNNING
+    HEART_TYPE: RUNNING_HEART
     }
 X_POS = 80 ## constante de posição horizontal
 Y_POS = 310 ## constante de posição vertical
@@ -39,6 +39,7 @@ class Dinossaur(Sprite):
         self.dino_run = True ## Evento de corrida do dino(sempre está correndo atté o jogo acabar)
         self.jump_vel = JUMP_VEL ## evento de cálculo da velocidade do pulo ao pular
         self.dino_duck = False ## evento de agachar
+        self.hearts = 0
         self.setup_state()
 
     def setup_state(self):
@@ -47,9 +48,7 @@ class Dinossaur(Sprite):
         self.hammer = False
         self.heart = False
         self.show_text = False
-        self.shield_time_up = 0
-        self.hammer_time_up = 0
-        self.heart_time_up = 0
+        self.power_up_time = 0
 
     def update(self, user_input): ## metódo presente em todos os objetos (<<< assim como o método draw) atualiza o estado do objetp, no caso o dino.
         if user_input[pygame.K_SPACE] and not self.dino_jump and not self.dino_duck: ## usa o input <tecla space> para ativar o modo jump
